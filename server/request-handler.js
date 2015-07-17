@@ -1,12 +1,38 @@
-/*************************************************************
+var utils = require('./utils');
 
-You should implement your request handler function in this file.
+var objectId = 1;
+var messages = [
+  // {
+  //   username:'',
+  //   message:'', 
+  //   objectId: objectId
+  // }
+];
 
-requestHandler is already getting passed to http.createServer()
-in basic-server.js, but it won't work as is.
+var actions = {
+  'GET': function(request, response){
+    utils.sendResponse(response, {results: messages})
+  },
+  'POST': function(request, response){
+    utils.collectData(request, function(message){
+    messages.push(message);
+    message.objectId = ++objectId;
+    utils.sendResponse(response, {objectId: 1}, 201)
+    })
+  },
+  'OPTIONS': function(request, response){
+  utils.sendResponse(response, null)
+  }
+}
 
-You'll have to figure out a way to export this function from
-this file and include it in basic-server.js so that it actually works.
+module.exports = function(request, response){
+  var action = actions[request.method];
+  if (action){
+    action(request, response);
+  }
+  else {
+    utils.sendResponse(response, "Not Found", 404);
+  }
 
 *Hint* Check out the node module documentation at http://nodejs.org/api/modules.html.
 
@@ -70,21 +96,5 @@ var requestHandler = function(request, response) {
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
   response.end("Hello, World!");
-};
-
-// These headers will allow Cross-Origin Resource Sharing (CORS).
-// This code allows this server to talk to websites that
-// are on different domains, for instance, your chat client.
-//
-// Your chat client is running from a url like file://your/chat/client/index.html,
-// which is considered a different domain.
-//
-// Another way to get around this restriction is to serve you chat
-// client from this domain by setting up static file serving.
-var defaultCorsHeaders = {
-  "access-control-allow-origin": "*",
-  "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
-  "access-control-allow-headers": "content-type, accept",
-  "access-control-max-age": 10 // Seconds.
 };
 
