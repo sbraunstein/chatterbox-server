@@ -28,10 +28,27 @@ var requestHandler = function(request, response) {
   // debugging help, but you should always be careful about leaving stray
   // console.logs in your code.
   console.log("Serving request type " + request.method + " for url " + request.url);
-
+  if(request.Url === "/classes/room1" && request.method === "GET"){
   // The outgoing status.
   var statusCode = 200;
+  }
+  else {
+    statusCode = 404;
+  }
 
+  function RequestMessage(request) = {
+    var message = "";
+
+    request.on('data', function (){
+      message += 'data'
+    })
+
+    .on('end', function(){
+      var parsed = JSON.parse(message);
+    } 
+
+    responses.push(parsed);
+  }
   // See the note below about CORS headers.
   var headers = defaultCorsHeaders;
 
